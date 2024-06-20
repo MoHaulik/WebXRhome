@@ -6,33 +6,35 @@
 <title>SPATIAL SHELL</title>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script type=module>
-const $ = (o)=>document.querySelector(o) 
+const $ = (o) => document.querySelector(o) 
 const { createApp } = Vue
 let viewWindow 
-let config = (await import( './config.js' )).default
+let config = (await import('./config.js')).default
 console.log(config) 
-const objinst = [];
+const objinst = []
 
-// view window API call 
-async function call(method,param) {
-	return await viewWindow.API.call(method,param) 
+//view window API call 
+async function call(method, param) {
+	return await viewWindow.API.call(method, param) 
 }
-// file select component
+
+//file select component
 const SelectFile = {
-	props:{
-		src:"String",
-		accept:"String"
+	props: {
+		src: String,
+		accept: String
 	},
 	methods: {
 		fsel(ev) {
 			const url = URL.createObjectURL(ev.target.files[0])
-			this.$emit('seturl',url )
+			this.$emit('seturl', url)
 		}
 	},
 	template: `
-		<input type=file @change="fsel" :accept="accept">
+		<input type="file" @change="fsel" :accept="accept">
 	`
 }
+
 // main app
 let app = createApp({
 	data() {
@@ -124,9 +126,8 @@ onload = function() {
 	console.log(app) 
 	viewWindow = $('#view').contentWindow
 
-	// load from local storage
+	//load from local storage
 	const p = JSON.parse(localStorage.getItem("spatial0")) || {}
-//	save()
 
 	function save(param = null) {
 		// save to local storage 
@@ -137,10 +138,11 @@ onload = function() {
 
 	app.message = "loaded"
 }
-// callback from view 
+
+//callback from view 
 window.sceneloaded = () => {
 	app.message = "sceneloaded" 
-	// add clock 
+	//add clock 
 	app.add_obj(config.menu.app_list[0].items[0])
 }
 
