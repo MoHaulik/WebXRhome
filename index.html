@@ -30,11 +30,11 @@ const SelectFile = {
         }
     },
     template: `
-        <input type=file @change="fsel" :accept="accept">
+        <input type="file" @change="fsel" :accept="accept">
     `
 }
 // main app
-let app= createApp({
+let app = createApp({
     data() {
         return {
             message: 'Hello Spatial Shell!',
@@ -311,7 +311,9 @@ iframe {
                                         {{uis.name}} <input type="input" v-model="uis.value" size="5"/>
                                     </span>
                                     <span v-if="uis.type=='file'" class="uis">
-                                        {{uis.name}} <select-file @seturl="src => uis.value = src" :accept="uis.accept"/>
+                                        {{uis.name}} 
+                                        <select-file @seturl="src => uis.value = src" :accept="uis.accept"/>
+                                        <label class="gradient-button" for="file-upload">Upload</label>
                                     </span>
                                 </span>
                             </span>
