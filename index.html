@@ -58,7 +58,7 @@
                     back_kind: "pass",
                     back_mix: 100,
                     background_list: config.menu.background_list,
-                    app_list: config.menu.app_list,
+                    app_list: config.menu.app_list.filter(group => group.group !== 'content sample'),
                     inst_list: [],
                     focus_idx: null,
                     instsize: 10,
@@ -73,7 +73,7 @@
                     config = (await import('./config.js?' + (new Date().getTime()))).default
                     console.log(config)
                     this.back_kind_select = config.menu.back_kind_select
-                    this.app_list = config.menu.app_list
+                    this.app_list = config.menu.app_list.filter(group => group.group !== 'content sample')
                 },
                 ev_kind(ev) {
                     call("bgtype", { id: this.back_kind })
@@ -309,14 +309,8 @@
             display: none;
         }
 
-        /* Hide content sample section */
-        .left-pane h3, 
-        .left-pane ul {
-            display: none;
-        }
-
-        .left-pane .select-wrapper:nth-of-type(2) {
-            display: none;
+        .content-sample {
+            display: none; /* Hide content sample section */
         }
 
         .debug {
@@ -341,7 +335,7 @@
                 <div class="select-wrapper">
                     <h2>Apps</h2>
                     <div v-for="objg of app_list" v-cloak>
-                        <h3 v-if="objg.group !== 'utils'">{{objg.group}}</h3> <!-- Hide 'utils' text -->
+                        <h3 v-if="objg.group !== 'content sample'">{{objg.group}}</h3>
                         <ul>
                             <li v-for="obj of objg.items">
                                 <button class="add" @click="add_obj(obj)">ADD</button>&nbsp;
@@ -378,7 +372,7 @@
             <div class="right-pane">
                 <iframe id="view" src="view.html?1"></iframe>
                 <div class="table-wrapper">
-                    <h2>Instances</2>
+                    <h2>Instances</h2>
                     <table>
                         <tr v-for="(inst, index) of inst_list"
                             :class="inst.focus ? 'focus' : ''">
