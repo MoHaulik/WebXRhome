@@ -44,7 +44,7 @@
             template: `
                 <div>
                     <input type="file" id="file-upload" @change="fsel" :accept="accept">
-                    <label for="file-upload" class="gradient-button">Pick files</label>
+                    <label for="file-upload">Pick files</label>
                     <span>{{ filename }}</span>
                 </div>
             `
@@ -291,16 +291,7 @@
         }
 
         .gradient-button {
-            background: linear-gradient(90deg, #ff6a00, #ff007f);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-        }
-
-        .gradient-button:hover {
-            opacity: 0.8;
+            display: none; /* Hide gradient buttons */
         }
 
         iframe {
@@ -320,6 +311,10 @@
 
         .content-sample {
             display: none; /* Hide content sample section */
+        }
+
+        .debug {
+            display: none; /* Hide debug section */
         }
     </style>
 </head>
