@@ -44,8 +44,8 @@
             template: `
                 <div>
                     <input type="file" id="file-upload" @change="fsel" :accept="accept">
-                    <label for="file-upload">Pick files</label>
-                    <span>{{ filename }}</span>
+                    <label for="file-upload" class="hidden">Pick files</label>
+                    <span class="hidden">{{ filename }}</span>
                 </div>
             `
         }
@@ -372,7 +372,7 @@
             <div class="right-pane">
                 <iframe id="view" src="view.html?1"></iframe>
                 <div class="table-wrapper">
-                    <h2>Instances</h2>
+                    <h2>Instances</2>
                     <table>
                         <tr v-for="(inst, index) of inst_list"
                             :class="inst.focus ? 'focus' : ''">
