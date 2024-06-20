@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html  lang="jp">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width">
+<title>SPATIAL SHELL</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script type=module>
+const $ = (o)=>document.querySelector(o) 
+const { createApp } = Vue
+let viewWindow 
+let config = (await import( './config.js' )).default
+console.log(config) 
+const objinst = [] ;
+
+//view window API call 
+async function call(method,param) {
+	return await viewWindow.API.call(method,param) 
+}
+//file select component
+const SelectFile = {
+	props:{
+			src:"String",
+			accept:"String"
+	},
+	methods: {
+		fsel(ev) {
+			const url = URL.createObjectURL(ev.target.files[0])
+			this.$emit('seturl',url )
+		}
+	},
+	template: `
+		<input type=file @change="fsel" :accept="accept">
+	`
+}
+// main app
+let app= createApp({
+	data() {
+		return {
+			message: 'Hello Spatial Shell!',
+			back_kind:"pass",
+			back_mix:100,
+			background_list:config.menu.background_list,
+			app_list:config.menu.app_list,
+			inst_list:[],
+			focus_idx:null,
+			instsize:10,
+			pined:false 
+		}
+	},
+	components:{
+		SelectFile 
+	},
+	methods:{
+		async reload() {
+			config = (await import('./config.js?'+(new Date().getTime()))).default
+			console.log(config)
+			this.back_kind_select = config.menu.back_kind_select
+			this.app_list = config.menu.app_list
+		},
+		ev_kind(ev) {
+			call("bgtype",{id:this.back_kind})
+			app.message = "change bg "+this.back_kind
+		},
+		ev_mix(ev) {
+			call("bgmix",{value:this.back_mix})			
+		},
+		async add_obj(p) {
+			console.log(p)
+			const up = p.param?p.param:{}
+			if(p.ui) for(let ui of p.ui) up[ui.id?ui.id:ui.name] = ui.value
+			const obj = await call("addobj",{id:p.id,path:p.path,param:up})
+			this.inst_list.push( obj )
+			console.log(this.inst_list) 
+			this.focus(this.inst_list.length-1)
+			app.message = "open "+p.name 
+		},
+		delobj(idx=null) {
+			if(idx===null) {
+				idx = this.focus_idx 
+				this.focus_idx  = null
+			}
+			if(idx===null) return 
+			console.log("del "+idx) 
+			const inst = this.inst_list[idx]
+			call("delobj",inst)
+			app.message = "remove "+inst.id 
+			this.inst_list.splice(idx,1)
+		},
+		focus(idx) {
+			console.log("focus "+idx) 
+			const inst = this.inst_list[idx]
+			this.inst_list[idx].focus = true
+			for(let i in this.inst_list) {
+				const il = this.inst_list[i]
+				il.focus = i==idx 
+				il.app.hcolor = (i==idx)?(il.pined?"#f8f":"#f88"):"#ccc" 
+			}
+			this.focus_idx = idx 
+			this.instsize = this.inst_list[this.focus_idx].app.scale*10
+			this.pined = this.inst_list[this.focus_idx].pined
+			app.message = "focus "+this.inst_list[this.focus_idx].id 
+		},
+		recenterobj(ev) {
+			
+		},
+		pinobj(ev) {
+			console.log(this.pined)
+			this.inst_list[this.focus_idx].pined = this.pined 
+		},
+		ev_instsize(ev) {
+			if(this.inst_list[this.focus_idx]?.app?.scale) this.inst_list[this.focus_idx].app.scale = ev.target.value/10
+		},
+		localtime(utime) {
+			let  dt = new Date() 
+			dt.setTime(utime-dt.getTimezoneOffset()*60000)
+			return dt.toISOString().substr(11,8)
+		}
+	}
+})
+
+onload = function() {
+	app = app.mount('body')
+	console.log(app) 
+	viewWindow = $('#view').contentWindow
+
+	//load from local storage
+	const  p = JSON.parse(localStorage.getItem("spatial0")) || {}
+//	save()
+
+	function save(param=null) {
+		// save to local storage 
+		p.time = new Date().getTime() 
+		localStorage.setItem("spatial0",JSON.stringify(p))	
+		app.message = "saved"	
+	}
+
+	app.message = "loaded"
+}
+//callback from view 
+window.sceneloaded= ()=> {
+	app.message = "sceneloaded" 
+	//add clock 
+	app.add_obj(config.menu.app_list[0].items[0])
+}
+
+</script>
+
+<style type="text/css">
+body,html {
+	display:flex ;
+	width:100%;
+	height:100% ;
+	margin: 0;
+	background-color:#555 ;
+	color:white ;
+	font-family: serif ;
+	font-size:18px ;
+	box-sizing:border-box ;
+}
+div.ui {
+	width:cacl(100% - 1rem);
+	margin-top:0.5rem ;
+	margin-left:1rem ;
+}
+h1 {
+	text-align:center ;
+	margin-top:0.5rem ;
+	margin-bottom:0.5rem ;
+}
+h2 {
+	margin-left: 1rem ;
+	margin-top:0.5rem ;
+	margin-bottom:0.2rem ;
+}
+h3 {
+	margin-left: 1.5rem ;
+	margin-top:0.5rem ;
+	margin-bottom:0 ;	
+}
+table {
+	margin-left:1rem ;
+	margin-bottom:1rem ;
+}
+table,td {
+	border:1px solid #ccc ;
+	border-collapse: collapse ;
+}
+ul {
+	margin-top:0.5rem ;
+}
+#msg {
+	width: 70% ;
+	font-size:0.8rem ;
+	color: white ;
+	background-color:#222 ;
+}
+#left{
+	width:60vw;
+	height:100% ;
+	overflow:hidden ;
+}
+#right{
+	flex-grow: 1 ;
+	height:100% ;
+	overflow:hidden ;
+}
+[v-cloak] {
+	display: none;
+}
+span.uis {
+	margin-left:0.5rem ;
+}
+tr.focus {
+	background-color:#644 ;
+}
+#roll_l {
+	height:calc(100vh - 8rem)  ;
+	overflow:hidden ;
+	overflow-y :scroll ;
+	background-color:#666;
+	margin-inline:0.5rem ;
+}
+#roll_r {
+	height:calc(55vh)  ;
+	overflow:hidden ;
+	overflow-y :scroll ;
+	background-color:#666;
+	margin-inline:0.5rem ;
+}
+#debug {
+	position: absolute ;
+	width:50vw ;
+	left:0vw ;
+	top: calc(100vh - 4rem) ;	
+}
+</style>
+</head>
+<body>
+<div id=left>
+<h1>SPATIAL SHELL</h1>
+<div id=roll_l>
+<h2>background</h2>
+<div class=ui>
+kind <select id=sel_kind v-model="back_kind" @change="ev_kind" v-cloak >
+		<option v-for="sel of background_list" :value="sel.id" >{{sel.name}}</option>
+	</select>
+mix<input v-model="back_mix" @input="ev_mix" type=range min=0 max=100>
+<span v-cloak >{{back_mix}}</span>
+
+</div>
+<h2>apps</h2>
+<div class=ui>
+<div v-for="objg of app_list" v-cloak>
+	<h3>{{objg.group}}</h3>
+<ul>
+	<li v-for="obj of objg.items" ><button class=add @click="add_obj(obj)">ADD</button>&nbsp;{{obj.name}}
+	<span v-if="obj.ui" class=oui>
+		<span v-for="uis of obj.ui" class=uis>
+			<select v-if="uis.type=='select'" v-model="uis.value">
+				<option v-for="opt of uis.options" :value="opt.id">{{opt.name}}</option>
+			</select>
+		<span v-if="uis.type=='range'" class=uis>
+		  {{uis.name}} <input type=range v-model="uis.value" :min="uis.min" :max="uis.max" :step="uis.step"/><span>{{uis.value}}</span>
+		</span>
+		<span v-if="uis.type=='color'" class=uis>
+			{{uis.name}} <input type=color v-model="uis.value" />
+		</span>
+		<span v-if="uis.type=='text'" class=uis>
+			{{uis.name}} <input type=input v-model="uis.value" size=5 />
+		</span>
+		<span v-if="uis.type=='file'" class=uis>
+			{{uis.name}} <select-file @seturl="src=>uis.value=src" :accept="uis.accept"/>
+		</span>
+		</span>
+	</span>
+	</li>
+</ul>
+</div>
+</div>
+
+<br/>
+</div>
+<div id=debug class=ui>
+	<textarea id=msg readonly v-cloak >{{message}}</textarea>
+	<button @click="reload">CONFIG RELOAD</button>
+</div>
+</div>
+<div id=right>
+	<iframe id=view src="view.html?1" style="width:100%;height:40%"></iframe>
+<div id=roll_r>
+<h2>instances</h2>
+	<div class=ui>
+		<table>
+			<tr v-for="(inst,index) of inst_list"
+				:class="inst.focus?'focus':''">
+				<td>{{localtime(inst.time)}}</td><td>{{inst.id}}</td><td><button @click="focus(index)">FOCUS</button></td></tr>
+		</table>
+		scale:<input type=range min=1 max=100 step=0.1 v-model="instsize" @input="ev_instsize"
+		style="width:20rem"><span>{{instsize}}</span><br/>
+
+		<button @click="delobj()">REMOVE</button>
+	</div>
+</div>
+</div>
+</body>
+</html>
