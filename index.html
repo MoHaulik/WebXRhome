@@ -301,7 +301,7 @@ iframe {
     <div class="main-content">
         <div class="left-pane">
             <div class="select-wrapper">
-                <h2>Background</h2>
+                <h2>Environment</h2>
                 kind 
                 <select id="sel_kind" v-model="back_kind" @change="ev_kind" v-cloak>
                     <option v-for="sel of background_list" :value="sel.id">{{sel.name}}</option>
@@ -312,10 +312,15 @@ iframe {
             <div class="select-wrapper">
                 <h2>Apps</h2>
                 <div v-for="objg of app_list" v-cloak>
-                    <h3>{{objg.group}}</h3>
+                    <h3 v-if="objg.group !== 'utils'">{{objg.group}}</h3> <!-- Hide 'utils' text -->
                     <ul>
                         <li v-for="obj of objg.items">
-                            <button class="add" @click="add_obj(obj)">ADD</button>&nbsp;{{obj.name}}
+                            <button class="add" @click="add_obj(obj)">ADD</button>&nbsp;
+                            <span v-if="obj.name === '2D image loader scr'">Add 2D Image</span>
+                            <span v-if="obj.name === '2D video loader scr'">Add 2D Video</span>
+                            <span v-if="obj.name === '3D Model loader scr'">Add 3D Model</span>
+                            <span v-if="obj.name === '360 image loader scr'">Add 360 Image</span>
+                            <span v-if="obj.name !== '2D image loader scr' && obj.name !== '2D video loader scr' && obj.name !== '3D Model loader scr' && obj.name !== '360 image loader scr'">{{obj.name}}</span>
                             <span v-if="obj.ui" class="oui">
                                 <span v-for="uis of obj.ui" class="uis">
                                     <select v-if="uis.type=='select'" v-model="uis.value">
