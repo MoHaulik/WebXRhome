@@ -13,21 +13,21 @@ export default {
 			{group:"utils",
 			items:[
 				{
-					name:"2D image loader",id:"image2D_loader",
+					name:"Add 2D Image",id:"image2D_loader",
 					path:"./apps/image2D.js",
 					ui:[
 						{id:"psrc",name:"src",type:"file",accept:".jpg,.jpeg,.png,.gif"}
 					]
 				},
 				{
-					name:"2D video loader",id:"video2D_loader",
+					name:"Add 2D Video",id:"video2D_loader",
 					path:"./apps/video2D.js",
 					ui:[
 						{id:"psrc",name:"src",type:"file",accept:".mp4,.webm,.mov"}
 					]
 				},
 				{
-					name:"3D Model loader",id:"model_loader",
+					name:"Add 3D Model",id:"model_loader",
 					path:"./apps/gltfmodel.js",
 					param:{
 						basescale:0.2
@@ -37,7 +37,7 @@ export default {
 					]
 				},
 				{
-					name:"360 image loader",id:"image360_loader",
+					name:"Add 360 Image",id:"image360_loader",
 					path:"./apps/image360.js",
 					ui:[
 						{id:"psrc",name:"src",type:"file",accept:".jpg,.jpeg,.png,.gif"}
