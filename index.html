@@ -6,102 +6,100 @@
 <title>SPATIAL SHELL</title>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script type=module>
-const $ = (o) => document.querySelector(o) 
+const $ = (o)=>document.querySelector(o) 
 const { createApp } = Vue
 let viewWindow 
 let config = (await import('./config.js')).default
 console.log(config) 
-const objinst = []
+const objinst = [];
 
 //view window API call 
-async function call(method, param) {
-	return await viewWindow.API.call(method, param) 
+async function call(method,param) {
+	return await viewWindow.API.call(method,param) 
 }
-
 //file select component
 const SelectFile = {
-	props: {
-		src: String,
-		accept: String
+	props:{
+			src:String,
+			accept:String
 	},
 	methods: {
 		fsel(ev) {
 			const url = URL.createObjectURL(ev.target.files[0])
-			this.$emit('seturl', url)
+			this.$emit('seturl',url )
 		}
 	},
 	template: `
-		<input type="file" @change="fsel" :accept="accept">
+		<input type=file @change="fsel" :accept="accept">
 	`
 }
-
 // main app
-let app = createApp({
+let app= createApp({
 	data() {
 		return {
 			message: 'Hello Spatial Shell!',
-			back_kind: "pass",
-			back_mix: 100,
-			background_list: config.menu.background_list,
-			app_list: config.menu.app_list,
-			inst_list: [],
-			focus_idx: null,
-			instsize: 10,
-			pined: false 
+			back_kind:"pass",
+			back_mix:100,
+			background_list:config.menu.background_list,
+			app_list:config.menu.app_list,
+			inst_list:[],
+			focus_idx:null,
+			instsize:10,
+			pined:false 
 		}
 	},
-	components: {
+	components:{
 		SelectFile 
 	},
-	methods: {
+	methods:{
 		async reload() {
-			config = (await import('./config.js?' + (new Date().getTime()))).default
+			config = (await import('./config.js?'+(new Date().getTime()))).default
 			console.log(config)
 			this.back_kind_select = config.menu.back_kind_select
 			this.app_list = config.menu.app_list
 		},
 		ev_kind(ev) {
-			call("bgtype", {id: this.back_kind})
-			app.message = "change bg " + this.back_kind
+			call("bgtype",{id:this.back_kind})
+			app.message = "change bg "+this.back_kind
 		},
 		ev_mix(ev) {
-			call("bgmix", {value: this.back_mix})			
+			call("bgmix",{value:this.back_mix})			
 		},
 		async add_obj(p) {
 			console.log(p)
-			const up = p.param ? p.param : {}
-			if (p.ui) for (let ui of p.ui) up[ui.id ? ui.id : ui.name] = ui.value
-			const obj = await call("addobj", {id: p.id, path: p.path, param: up})
-			this.inst_list.push(obj)
+			const up = p.param?p.param:{}
+			if(p.ui) for(let ui of p.ui) up[ui.id?ui.id:ui.name] = ui.value
+			const obj = await call("addobj",{id:p.id,path:p.path,param:up})
+			this.inst_list.push( obj )
 			console.log(this.inst_list) 
-			this.focus(this.inst_list.length - 1)
-			app.message = "open " + p.name 
+			this.focus(this.inst_list.length-1)
+			app.message = "open "+p.name 
 		},
-		delobj(idx = null) {
-			if (idx === null) {
+		delobj(idx=null) {
+			if(idx===null) {
 				idx = this.focus_idx 
-				this.focus_idx = null
+				this.focus_idx  = null
 			}
-			if (idx === null) return 
-			console.log("del " + idx) 
+			if(idx===null) return 
+			console.log("del "+idx) 
 			const inst = this.inst_list[idx]
-			call("delobj", inst)
-			app.message = "remove " + inst.id 
-			this.inst_list.splice(idx, 1)
+			call("delobj",inst)
+			app.message = "remove "+inst.id 
+			this.inst_list.splice(idx,1)
 		},
 		focus(idx) {
-			console.log("focus " + idx) 
+			console.log("focus "+idx) 
 			const inst = this.inst_list[idx]
 			this.inst_list[idx].focus = true
-			for (let i in this.inst_list) {
+			for(let i in this.inst_list) {
 				const il = this.inst_list[i]
-				il.focus = i == idx 
-				il.app.hcolor = (i == idx) ? (il.pined ? "#f8f" : "#f88") : "#ccc" 
+				il.focus = i==idx 
+				il.app.hcolor = (i==idx)?(il.pined?"#f8f":"#f88"):"#ccc" 
 			}
 			this.focus_idx = idx 
-			this.instsize = this.inst_list[this.focus_idx].app.scale * 10
+			this.instsize = this.inst_list[this.focus_idx].app.scale*10
 			this.pined = this.inst_list[this.focus_idx].pined
-			app.message = "focus " + this.inst_list[this.focus_idx].id 
+			app.message = "focus "+this.inst_list[this.focus_idx].id 
 		},
 		recenterobj(ev) {
 			
@@ -111,12 +109,12 @@ let app = createApp({
 			this.inst_list[this.focus_idx].pined = this.pined 
 		},
 		ev_instsize(ev) {
-			if (this.inst_list[this.focus_idx]?.app?.scale) this.inst_list[this.focus_idx].app.scale = ev.target.value / 10
+			if(this.inst_list[this.focus_idx]?.app?.scale) this.inst_list[this.focus_idx].app.scale = ev.target.value/10
 		},
 		localtime(utime) {
-			let dt = new Date() 
-			dt.setTime(utime - dt.getTimezoneOffset() * 60000)
-			return dt.toISOString().substr(11, 8)
+			let  dt = new Date() 
+			dt.setTime(utime-dt.getTimezoneOffset()*60000)
+			return dt.toISOString().substr(11,8)
 		}
 	}
 })
@@ -127,20 +125,20 @@ onload = function() {
 	viewWindow = $('#view').contentWindow
 
 	//load from local storage
-	const p = JSON.parse(localStorage.getItem("spatial0")) || {}
+	const  p = JSON.parse(localStorage.getItem("spatial0")) || {}
+//	save()
 
-	function save(param = null) {
+	function save(param=null) {
 		// save to local storage 
 		p.time = new Date().getTime() 
-		localStorage.setItem("spatial0", JSON.stringify(p))	
+		localStorage.setItem("spatial0",JSON.stringify(p))	
 		app.message = "saved"	
 	}
 
 	app.message = "loaded"
 }
-
 //callback from view 
-window.sceneloaded = () => {
+window.sceneloaded= ()=> {
 	app.message = "sceneloaded" 
 	//add clock 
 	app.add_obj(config.menu.app_list[0].items[0])
