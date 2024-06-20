@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width">
 <title>SPATIAL SHELL</title>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script type=module>
-const $ = (o)=>document.querySelector(o)
+<script type="module">
+const $ = (o) => document.querySelector(o)
 const { createApp } = Vue
 let viewWindow
 let config = (await import('./config.js')).default
 console.log(config)
-const objinst = [];
+const objinst = []
 
 //view window API call
-async function call(method,param) {
-    return await viewWindow.API.call(method,param)
+async function call(method, param) {
+    return await viewWindow.API.call(method, param)
 }
 
 //file select component
@@ -31,13 +31,13 @@ const SelectFile = {
     },
     methods: {
         fsel(ev) {
-            const file = ev.target.files[0];
+            const file = ev.target.files[0]
             if (file) {
-                const url = URL.createObjectURL(file);
-                this.$emit('seturl', url);
-                this.filename = "File picked";
+                const url = URL.createObjectURL(file)
+                this.$emit('seturl', url)
+                this.filename = "File picked"
             } else {
-                this.filename = "No files picked";
+                this.filename = "No files picked"
             }
         }
     },
@@ -119,7 +119,7 @@ let app = createApp({
             app.message = "focus " + this.inst_list[this.focus_idx].id
         },
         recenterobj(ev) {
-            
+
         },
         pinobj(ev) {
             console.log(this.pined)
@@ -293,6 +293,9 @@ iframe {
 .hidden {
     display: none;
 }
+#content-sample {
+    display: none;
+}
 </style>
 </head>
 <body>
@@ -316,11 +319,11 @@ iframe {
                     <ul>
                         <li v-for="obj of objg.items">
                             <button class="add" @click="add_obj(obj)">ADD</button>&nbsp;
-                            <span v-if="obj.name === '2D image loader scr'">Add 2D Image</span>
-                            <span v-if="obj.name === '2D video loader scr'">Add 2D Video</span>
-                            <span v-if="obj.name === '3D Model loader scr'">Add 3D Model</span>
-                            <span v-if="obj.name === '360 image loader scr'">Add 360 Image</span>
-                            <span v-if="obj.name !== '2D image loader scr' && obj.name !== '2D video loader scr' && obj.name !== '3D Model loader scr' && obj.name !== '360 image loader scr'">{{obj.name}}</span>
+                            <span v-if="obj.name === 'Add 2D Image'">Add 2D Image</span>
+                            <span v-if="obj.name === 'Add 2D Video'">Add 2D Video</span>
+                            <span v-if="obj.name === 'Add 3D Model'">Add 3D Model</span>
+                            <span v-if="obj.name === 'Add 360 Image'">Add 360 Image</span>
+                            <span v-if="obj.name !== 'Add 2D Image' && obj.name !== 'Add 2D Video' && obj.name !== 'Add 3D Model' && obj.name !== 'Add 360 Image'">{{obj.name}}</span>
                             <span v-if="obj.ui" class="oui">
                                 <span v-for="uis of obj.ui" class="uis">
                                     <select v-if="uis.type=='select'" v-model="uis.value">
@@ -353,13 +356,27 @@ iframe {
                 <table>
                     <tr v-for="(inst, index) of inst_list"
                         :class="inst.focus ? 'focus' : ''">
-                        <td>{{localtime(inst.time)}}</td><td>{{inst.id}}</td><td><button @click="focus(index)">FOCUS</button></td></tr>
+                        <td>{{localtime(inst.time)}}</td><td>{{inst.id}}</td><td><button @click="focus(index)">SELECT</button></td></tr>
                 </table>
                 scale: <input type="range" min="1" max="100" step="0.1" v-model="instsize" @input="ev_instsize">
                 <span>{{instsize}}</span><br/>
                 <button @click="delobj()">REMOVE</button>
             </div>
         </div>
+    </div>
+</div>
+<div id="content-sample" class="hidden">
+    <h2>Content Sample</h2>
+    <div>
+        <button @click="add_obj({ id: 'primitive', name: 'Primitive', path: './primitive.js' })">ADD Primitive</button>
+    </div>
+    <div>
+        <label for="size">Size</label>
+        <input type="range" id="size" v-model="size" min="1" max="100">
+    </div>
+    <div>
+        <label for="color">Color</label>
+        <input type="color" id="color" v-model="color">
     </div>
 </div>
 </body>
