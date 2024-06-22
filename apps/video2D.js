@@ -2,61 +2,59 @@
     SPATIAL SHELL APP
     2D video viewer 
 */
-
-// Register the ss-video component
-AFRAME.registerComponent('ss-video', {
-    schema: {
-        type: "string"
+export default {
+    props:{
+        psrc:String,
+        pscale:Number,
     },
-    init: function() {
+    template: `<a-entity :scale="pscale+' '+pscale+' '+pscale">
+        <a-plane width=0.2 height=.2 position="0 0.2 0" material="shader:flat" :ss-video="psrc"></a-plane>
+    </a-entity>`
+}
+
+AFRAME.registerComponent('ss-video', {
+    schema:{
+        type:"string"
+    },
+    init:function() {
         console.log("init ss-video");
         this.assets = document.querySelector("a-assets");
         this.isPlaying = true;
-
-        // Add event listener for play/pause
-        this.el.addEventListener('togglePlayPause', this.togglePlayPause.bind(this));
+        this.el.addEventListener('click', this.togglePlayPause.bind(this));
     },
-    update: function() {
+    update:function() {
         this.id = crypto.randomUUID();
         this.setimg(this.data, this.id);
     },
-    remove: function() {
+    remove:function() {
         if (this.imgdom) {
             this.imgdom.remove();
         }
     },
-    setimg: function(src, id) {
+    setimg:function(src, id) {
         console.log("Setting video source:", src);
-        return new Promise((resolve, reject) => {
-            const video = document.createElement("video");
-            video.id = id;
-            video.setAttribute("crossorigin", "anonymous");
-            video.setAttribute("playsinline", "");
-            video.setAttribute("webkit-playsinline", "");
-            video.setAttribute("autoplay", true);
-            video.setAttribute("loop", true);
+        return new Promise((resolve,reject)=>{
+            const im1 = document.createElement("video");
+            im1.id = id;
+            im1.setAttribute("crossorigin","anonymous");
+            im1.setAttribute("playsinline", "");
+            im1.setAttribute("webkit-playsinline", "");
+            im1.setAttribute("autoplay",true);
+            im1.setAttribute("loop",true);
 
-            video.onloadedmetadata = () => {
-                const aspectRatio = video.videoHeight / video.videoWidth;
-                const baseSize = 0.5;
-                const height = aspectRatio > 1 ? baseSize : aspectRatio * baseSize;
-                const width = aspectRatio > 1 ? baseSize / aspectRatio : baseSize;
-
-                this.el.setAttribute("width", width);
-                this.el.setAttribute("height", height);
-                this.el.setAttribute("position", {x: 0, y: height/2, z: 0});
-                this.el.setAttribute("material", "src", "#" + id);
-                resolve(video);
+            im1.onloadeddata = ()=>{
+                const as=(im1.videoHeight/im1.videoWidth);
+                const bsize = 0.5;
+                const h=as>1?1:as*bsize;
+                this.el.setAttribute("width",(as>1?1/as:1)*bsize);
+                this.el.setAttribute("height",h);
+                this.el.setAttribute("position",{x:0,y:h/2,z:0});
+                this.el.setAttribute("material","src","#"+id);
+                resolve(im1);
             };
-
-            video.onerror = (error) => {
-                console.error("Error loading video:", error);
-                reject(error);
-            };
-
-            video.src = src;
-            this.assets.appendChild(video);
-            this.imgdom = video;
+            im1.src = src;
+            this.assets.appendChild(im1);
+            this.imgdom = im1;
         });
     },
     togglePlayPause: function() {
@@ -71,47 +69,3 @@ AFRAME.registerComponent('ss-video', {
         }
     }
 });
-
-// Register the video-controls component
-AFRAME.registerComponent('video-controls', {
-    init: function() {
-        this.onTriggerDown = this.onTriggerDown.bind(this);
-        this.onPinch = this.onPinch.bind(this);
-
-        // Oculus Touch controller events
-        this.el.addEventListener('triggerdown', this.onTriggerDown);
-
-        // Hand tracking events
-        this.el.addEventListener('pinchstarted', this.onPinch);
-    },
-
-    onTriggerDown: function(evt) {
-        console.log("Trigger pressed");
-        this.togglePlayPause();
-    },
-
-    onPinch: function(evt) {
-        console.log("Pinch detected");
-        this.togglePlayPause();
-    },
-
-    togglePlayPause: function() {
-        const videoEl = this.el.querySelector('[ss-video]');
-        if (videoEl) {
-            videoEl.emit('togglePlayPause');
-        }
-    }
-});
-
-// Export the default object
-export default {
-    props: {
-        psrc: String,
-        pscale: Number,
-    },
-    template: `
-        <a-entity :scale="pscale+' '+pscale+' '+pscale" video-controls>
-            <a-plane material="shader:flat" :ss-video="psrc"></a-plane>
-        </a-entity>
-    `
-}
