@@ -19,9 +19,12 @@ AFRAME.registerComponent('ss-video', {
         this.isPlaying = true;
         this.lastTap = 0;
 
-        // Add event listener for double-tap gesture
-        this.el.addEventListener('click', (event) => {
-            this.handleTap(event);
+        // Add event listener for VR controller and hand tracking
+        this.el.addEventListener('grab-start', (event) => {
+            this.handleInteraction(event);
+        });
+        this.el.addEventListener('mousedown', (event) => {
+            this.handleInteraction(event);
         });
     },
     update: function () {
@@ -55,7 +58,7 @@ AFRAME.registerComponent('ss-video', {
             this.imgdom = im1;
         });
     },
-    handleTap: function (event) {
+    handleInteraction: function (event) {
         const currentTime = new Date().getTime();
         const tapGap = currentTime - this.lastTap;
 
