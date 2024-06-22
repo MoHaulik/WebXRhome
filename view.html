@@ -200,10 +200,10 @@ html,body {
     <a-entity id="camrig"  position="0 1.2 0" vrheight > 
         <a-entity id="camera" camera  look-controls wasd-controls></a-entity>
         <!--vr controller-->
-        <a-entity oculus-touch-controls="hand: left; model:false"  grab2 ></a-entity>
-        <a-entity oculus-touch-controls="hand: right; model:true"  grab2 ></a-entity>
-        <a-entity id=hand_l hand-tracking-controls="hand: left" grab2="realhand:true"></a-entity>
-        <a-entity id=hand_r hand-tracking-controls="hand: right" grab2="realhand:true"></a-entity>
+        <a-entity oculus-touch-controls="hand: left; model:false"  raycaster="objects: .video-plane" grab2 ></a-entity>
+        <a-entity oculus-touch-controls="hand: right; model:true" raycaster="objects: .video-plane" grab2 ></a-entity>
+        <a-entity id=hand_l hand-tracking-controls="hand: left" raycaster="objects: .video-plane" grab2="realhand:true"></a-entity>
+        <a-entity id=hand_r hand-tracking-controls="hand: right" raycaster="objects: .video-plane" grab2="realhand:true"></a-entity>
     </a-entity>
 </a-scene>
 
