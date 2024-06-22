@@ -173,6 +173,7 @@
             font-family: Arial, sans-serif;
             font-size: 18px;
             box-sizing: border-box;
+            padding-bottom: 20px; /* Added space at the bottom */
         }
 
         .container {
@@ -316,12 +317,6 @@
         .debug {
             display: none; /* Hide debug section */
         }
-
-        .container::after {
-            content: '';
-            display: block;
-            height: 20px; /* Add space at the bottom of the website */
-        }
     </style>
 </head>
 <body>
@@ -341,7 +336,6 @@
                 <div class="select-wrapper">
                     <h2>Apps</h2>
                     <div v-for="objg of app_list" v-cloak>
-                        <h3 v-if="objg.group !== 'content sample'">{{objg.group}}</h3>
                         <ul>
                             <li v-for="obj of objg.items">
                                 <button class="add" @click="add_obj(obj)">+</button>&nbsp;
@@ -382,7 +376,7 @@
                     <table>
                         <tr v-for="(inst, index) of inst_list"
                             :class="inst.focus ? 'focus' : ''">
-                            <td>{{localtime(inst.time)}}</td><td>{{inst.id}}</td><td><button @click="focus(index)">Select</button></td></tr>
+                            <td>{{localtime(inst.time)}}</td><td>{{inst.id}}</td><td><button @click="focus(index)">SELECT</button></td></tr>
                     </table>
                     scale: <input type="range" min="1" max="100" step="0.1" v-model="instsize" @input="ev_instsize">
                     <span>{{instsize}}</span><br/>
