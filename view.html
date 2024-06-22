@@ -65,8 +65,8 @@ const app= Vue.createApp({
                     return prop
                 },
                 components: { ImportObj },
-                template: `<a-cylinder radius="0.005" height="0.1" rotation="90 0 0" color="white" opacity="0.8" grabbable2="distance:.04" ss_grabbase>
-                    <a-entity position="0 0.05 0" >
+                template: `<a-cylinder radius="0.005" height="0.1" rotation="90 0 0" color="white" :opacity="grabbed ? 0.2 : 0.8" grabbable2="distance:.04" ss_grabbase @grab-start="grabbed = true" @grab-end="grabbed = false">
+                    <a-entity :position="0 0.1 0" >
                         <ImportObj ${propstr.join(" ")} ></ImportObj>
                     </a-entity>
                 </a-cylinder>`
