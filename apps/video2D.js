@@ -1,4 +1,3 @@
-// video2D.js
 export default {
     props: {
         psrc: String,
@@ -6,7 +5,6 @@ export default {
     },
     template: `<a-entity :scale="pscale+' '+pscale+' '+pscale">
         <a-plane class="video-plane" width="1" height="1" material="shader:flat" :ss-video="psrc"></a-plane>
-        <a-plane class="hitbox" width="1" height="1" material="opacity: 0;" position="0 0 0.01"></a-plane>
     </a-entity>`
 };
 
@@ -19,10 +17,11 @@ AFRAME.registerComponent('ss-video', {
         console.log("init");
         this.assets = document.querySelector("a-assets");
         this.isPlaying = true;
+        this.lastTap = 0;
 
-        // Add event listener for hitbox
-        this.el.addEventListener('click', () => {
-            this.togglePlayPause();
+        // Add event listener for double-tap gesture
+        this.el.addEventListener('click', (event) => {
+            this.handleTap(event);
         });
     },
     update: function () {
@@ -55,6 +54,15 @@ AFRAME.registerComponent('ss-video', {
             this.assets.appendChild(im1);
             this.imgdom = im1;
         });
+    },
+    handleTap: function (event) {
+        const currentTime = new Date().getTime();
+        const tapGap = currentTime - this.lastTap;
+
+        if (tapGap < 300 && tapGap > 0) {
+            this.togglePlayPause();
+        }
+        this.lastTap = currentTime;
     },
     togglePlayPause: function () {
         if (this.isPlaying) {
