@@ -66,11 +66,11 @@ const app= Vue.createApp({
 					return prop
 				},
 				components: { ImportObj },
-				template: `<a-cylinder radius="0.005" height="0.03" rotation="0 0 90" color="white" opacity="0.8" grabbable2="distance:.04" ss_grabbase>
-    <a-entity position="0 0.02 0">
-        <ImportObj ${propstr.join(" ")} ></ImportObj>
-    </a-entity>
-</a-cylinder>`
+				template: `<a-box width=0.02 height=0.02 depth=0.02  :color="hcolor" opacity=0.8  grabbable2="distance:.04" ss_grabbase>
+					<a-entity position="0 0.01 0" >
+						<ImportObj ${propstr.join(" ")} ></ImportObj>
+					</a-entity>
+				</a-box>`
 			})
 			const el = document.createElement("a-entity")
 			let posy = document.querySelector("[camera]").object3D.position.y	
