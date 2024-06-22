@@ -20,11 +20,14 @@ AFRAME.registerComponent('ss-video', {
         this.lastTap = 0;
 
         // Add event listener for VR controller and hand tracking
-        this.el.addEventListener('grab-start', (event) => {
-            this.handleInteraction(event);
-        });
-        this.el.addEventListener('mousedown', (event) => {
-            this.handleInteraction(event);
+        this.el.addEventListener('grab-start', this.handleInteraction.bind(this));
+        this.el.addEventListener('mousedown', this.handleInteraction.bind(this));
+        
+        // Bind event listeners again when the position changes
+        this.el.addEventListener('componentchanged', (evt) => {
+            if (evt.detail.name === 'position') {
+                this.rebindEvents();
+            }
         });
     },
     update: function () {
@@ -74,5 +77,10 @@ AFRAME.registerComponent('ss-video', {
             this.imgdom.play();
         }
         this.isPlaying = !this.isPlaying;
+    },
+    rebindEvents: function () {
+        // Rebind event listeners for the updated position
+        this.el.addEventListener('grab-start', this.handleInteraction.bind(this));
+        this.el.addEventListener('mousedown', this.handleInteraction.bind(this));
     }
 });
