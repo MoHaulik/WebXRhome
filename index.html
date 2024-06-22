@@ -338,7 +338,7 @@
                         <h3 v-if="objg.group !== 'content sample'">{{objg.group}}</h3>
                         <ul>
                             <li v-for="obj of objg.items">
-                                <button class="add" @click="add_obj(obj)">ADD</button>&nbsp;
+                                <button class="add" @click="add_obj(obj)">+</button>&nbsp;
                                 <span v-if="obj.name === 'Add 2D Image'">Add 2D Image</span>
                                 <span v-if="obj.name === 'Add 2D Video'">Add 2D Video</span>
                                 <span v-if="obj.name === 'Add 3D Model'">Add 3D Model</span>
@@ -376,7 +376,7 @@
                     <table>
                         <tr v-for="(inst, index) of inst_list"
                             :class="inst.focus ? 'focus' : ''">
-                            <td>{{localtime(inst.time)}}</td><td>{{inst.id}}</td><td><button @click="focus(index)">FOCUS</button></td></tr>
+                            <td>{{localtime(inst.time)}}</td><td>{{inst.id}}</td><td><button @click="focus(index)">SELECT</button></td></tr>
                     </table>
                     scale: <input type="range" min="1" max="100" step="0.1" v-model="instsize" @input="ev_instsize">
                     <span>{{instsize}}</span><br/>
