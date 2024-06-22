@@ -17,16 +17,14 @@ AFRAME.registerComponent('ss-video', {
         console.log("init");
         this.assets = document.querySelector("a-assets");
         this.isPlaying = true;
-        this.lastRotation = 0;
+        this.lastTap = 0;
 
-        const cylinder = document.querySelector('#video-control-cylinder');
-        if (cylinder) {
-            cylinder.addEventListener('componentchanged', (evt) => {
-                if (evt.detail.name === 'rotation') {
-                    this.handleRotation(evt.target.object3D.rotation);
-                }
-            });
-        }
+        // Rebind event listeners when the position changes
+        this.el.addEventListener('componentchanged', (evt) => {
+            if (evt.detail.name === 'rotation') {
+                this.handleRotation(evt.detail.newData);
+            }
+        });
     },
     update: function () {
         this.id = crypto.randomUUID();
@@ -60,10 +58,7 @@ AFRAME.registerComponent('ss-video', {
         });
     },
     handleRotation: function (rotation) {
-        const angle = THREE.Math.radToDeg(rotation.x); // Assuming twist is around x-axis
-        if (angle > 50 && this.isPlaying) {
-            this.togglePlayPause();
-        } else if (angle < 10 && !this.isPlaying) {
+        if (rotation.x > 50) {
             this.togglePlayPause();
         }
     },
