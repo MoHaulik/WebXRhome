@@ -1,68 +1,67 @@
-/*
-	SPATIAL SHELL APP
-	2D video viewer 
-*/
 export default {
-	props:{
-		psrc:String,
-		pscale:Number,
-	},
-	template: `<a-entity :scale="pscale+' '+pscale+' '+pscale">
-		<a-plane width=0.2 height=.2 position="0 0.2 0" material="shader:flat" :ss-video="psrc"></a-plane>
+    props: {
+        psrc: String,
+        pscale: Number,
+    },
+    template: `<a-entity :scale="pscale+' '+pscale+' '+pscale">
+		<a-plane class="video-plane" width=0.2 height=.2 position="0 0.2 0" material="shader:flat" :ss-video="psrc"></a-plane>
+        <a-plane class="hitbox" width=0.2 height=.2 position="0 0.2 0" material="opacity: 0;"></a-plane>
 	</a-entity>`
-}
+};
 
-if(AFRAME.components['ss-video']) delete AFRAME.components['ss-video']
-
+if (AFRAME.components['ss-video']) delete AFRAME.components['ss-video'];
 AFRAME.registerComponent('ss-video', {
-	schema: {
-		type: "string"
-	},
-	init: function() {
-		console.log("init");
-		console.log(this.el.components);
-		this.assets = document.querySelector("a-assets");
-		this.isPlaying = true; // Track the playing state
-	},
-	update: function() {
-		this.id = crypto.randomUUID();
-		this.setimg(this.data, this.id);
-	},
-	remove: function() {
-		this.imgdom.remove();
-	},
-	setimg: function(src, id) {
-		console.log(src);
-		return new Promise((resolve, reject) => {
-			const im1 = document.createElement("video");
-			im1.id = id;
-			im1.setAttribute("crossorigin", "anonymous");
-			im1.setAttribute("autoplay", true);
-			im1.setAttribute("loop", true);
+    schema: {
+        type: "string"
+    },
+    init: function () {
+        console.log("init");
+        console.log(this.el.components);
+        this.assets = document.querySelector("a-assets");
+        this.isPlaying = true;
 
-			im1.onloadeddata = () => {
-				const as = (im1.videoHeight / im1.videoWidth);
-				const bsize = 0.5;
-				const h = as > 1 ? 1 : as * bsize;
-				this.el.setAttribute("width", (as > 1 ? 1 / as : 1) * bsize);
-				this.el.setAttribute("height", h);
-				this.el.setAttribute("position", { x: 0, y: h / 2, z: 0 });
-				this.el.setAttribute("material", "src", "#" + id);
-				resolve(im1);
-			};
-			im1.src = src;
-			this.assets.appendChild(im1);
-			this.imgdom = im1;
+        // Add event listener for hitbox
+        this.el.querySelector('.hitbox').addEventListener('click', () => {
+            this.togglePlayPause();
+        });
+    },
+    update: function () {
+        this.id = crypto.randomUUID();
+        this.setimg(this.data, this.id);
+    },
+    remove: function () {
+        this.imgdom.remove();
+    },
+    setimg: function (src, id) {
+        console.log(src);
+        return new Promise((resolve, reject) => {
+            const im1 = document.createElement("video");
+            im1.id = id;
+            im1.setAttribute("crossorigin", "anonymous");
+            im1.setAttribute("autoplay", true);
+            im1.setAttribute("loop", true);
 
-			// Add click event listener to toggle play/pause
-			this.el.addEventListener('click', () => {
-				if (this.isPlaying) {
-					im1.pause();
-				} else {
-					im1.play();
-				}
-				this.isPlaying = !this.isPlaying;
-			});
-		});
-	},
+            im1.onloadeddata = () => {
+                const as = (im1.videoHeight / im1.videoWidth);
+                const bsize = 0.5;
+                const h = as > 1 ? 1 : as * bsize;
+                this.el.setAttribute("width", (as > 1 ? 1 / as : 1) * bsize);
+                this.el.setAttribute("height", h);
+                this.el.setAttribute("position", { x: 0, y: h / 2, z: 0 });
+                this.el.setAttribute("material", "src", "#" + id);
+                resolve(im1);
+            }
+            im1.src = src;
+            this.assets.appendChild(im1);
+            this.imgdom = im1;
+        });
+    },
+    togglePlayPause: function () {
+        if (this.isPlaying) {
+            this.imgdom.pause();
+        } else {
+            this.imgdom.play();
+        }
+        this.isPlaying = !this.isPlaying;
+    }
 });
