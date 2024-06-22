@@ -5,12 +5,12 @@
 export default {
 	menu:{
 		background_list:[
-			{name:"passthru",id:"pass"},
-			{name:"space",id:"space"},
-			{name:"360 photo",id:"p360"},
+			{name:"Passthrough",id:"pass"},
+			{name:"Space",id:"space"},
+			{name:"Sky",id:"p360"},
 		],
 		app_list:[
-			{group:"utils",
+			{group:"",
 			items:[
 				{
 					name:"Add 2D Image",id:"image2D_loader",
