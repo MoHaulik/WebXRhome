@@ -1,12 +1,13 @@
+// video2D.js
 export default {
     props: {
         psrc: String,
         pscale: Number,
     },
     template: `<a-entity :scale="pscale+' '+pscale+' '+pscale">
-		<a-plane class="video-plane" width=0.2 height=.2 position="0 0.2 0" material="shader:flat" :ss-video="psrc"></a-plane>
-        <a-plane class="hitbox" width=0.2 height=.2 position="0 0.2 0" material="opacity: 0;"></a-plane>
-	</a-entity>`
+        <a-plane class="video-plane" width="1" height="1" material="shader:flat" :ss-video="psrc"></a-plane>
+        <a-plane class="hitbox" width="1" height="1" material="opacity: 0;" position="0 0 0.01"></a-plane>
+    </a-entity>`
 };
 
 if (AFRAME.components['ss-video']) delete AFRAME.components['ss-video'];
@@ -16,12 +17,11 @@ AFRAME.registerComponent('ss-video', {
     },
     init: function () {
         console.log("init");
-        console.log(this.el.components);
         this.assets = document.querySelector("a-assets");
         this.isPlaying = true;
 
         // Add event listener for hitbox
-        this.el.querySelector('.hitbox').addEventListener('click', () => {
+        this.el.addEventListener('click', () => {
             this.togglePlayPause();
         });
     },
@@ -50,7 +50,7 @@ AFRAME.registerComponent('ss-video', {
                 this.el.setAttribute("position", { x: 0, y: h / 2, z: 0 });
                 this.el.setAttribute("material", "src", "#" + id);
                 resolve(im1);
-            }
+            };
             im1.src = src;
             this.assets.appendChild(im1);
             this.imgdom = im1;
