@@ -17,18 +17,16 @@ AFRAME.registerComponent('ss-video', {
         console.log("init");
         this.assets = document.querySelector("a-assets");
         this.isPlaying = true;
-        this.lastTap = 0;
+        this.lastRotation = 0;
 
-        // Add event listeners for VR controllers and hand tracking directly on the video plane
-        this.el.addEventListener('triggerdown', this.handleInteraction.bind(this));
-        this.el.addEventListener('pinchstarted', this.handleInteraction.bind(this));
-
-        // Rebind event listeners when the position changes
-        this.el.addEventListener('componentchanged', (evt) => {
-            if (evt.detail.name === 'position') {
-                this.rebindEvents();
-            }
-        });
+        const cylinder = document.querySelector('#video-control-cylinder');
+        if (cylinder) {
+            cylinder.addEventListener('componentchanged', (evt) => {
+                if (evt.detail.name === 'rotation') {
+                    this.handleRotation(evt.target.object3D.rotation);
+                }
+            });
+        }
     },
     update: function () {
         this.id = crypto.randomUUID();
@@ -61,14 +59,13 @@ AFRAME.registerComponent('ss-video', {
             this.imgdom = im1;
         });
     },
-    handleInteraction: function (event) {
-        const currentTime = new Date().getTime();
-        const tapGap = currentTime - this.lastTap;
-
-        if (tapGap < 300 && tapGap > 0) {
+    handleRotation: function (rotation) {
+        const angle = THREE.Math.radToDeg(rotation.x); // Assuming twist is around x-axis
+        if (angle > 50 && this.isPlaying) {
+            this.togglePlayPause();
+        } else if (angle < 10 && !this.isPlaying) {
             this.togglePlayPause();
         }
-        this.lastTap = currentTime;
     },
     togglePlayPause: function () {
         if (this.isPlaying) {
@@ -77,10 +74,5 @@ AFRAME.registerComponent('ss-video', {
             this.imgdom.play();
         }
         this.isPlaying = !this.isPlaying;
-    },
-    rebindEvents: function () {
-        // Rebind event listeners for the updated position
-        this.el.addEventListener('triggerdown', this.handleInteraction.bind(this));
-        this.el.addEventListener('pinchstarted', this.handleInteraction.bind(this));
     }
 });
