@@ -65,8 +65,8 @@ const app= Vue.createApp({
                     return prop
                 },
                 components: { ImportObj },
-                template: `<a-cylinder id="video-control-cylinder" radius="0.005" height="0.1" color="white" opacity="0.8" rotation="0 0 90" grabbable2="distance:.04" ss_grabbase>
-                    <a-entity position="0 0 0.05" >
+                template: `<a-cylinder radius="0.005" height="0.1" rotation="90 0 0" color="white" opacity="0.8" grabbable2="distance:.04" ss_grabbase>
+                    <a-entity position="0 0.05 0" >
                         <ImportObj ${propstr.join(" ")} ></ImportObj>
                     </a-entity>
                 </a-cylinder>`
@@ -200,10 +200,10 @@ html,body {
     <a-entity id="camrig"  position="0 1.2 0" vrheight > 
         <a-entity id="camera" camera  look-controls wasd-controls></a-entity>
         <!--vr controller-->
-        <a-entity oculus-touch-controls="hand: left; model:false"  raycaster="objects: .video-plane" grab2 ></a-entity>
-        <a-entity oculus-touch-controls="hand: right; model:true" raycaster="objects: .video-plane" grab2 ></a-entity>
-        <a-entity id=hand_l hand-tracking-controls="hand: left" raycaster="objects: .video-plane" grab2="realhand:true"></a-entity>
-        <a-entity id=hand_r hand-tracking-controls="hand: right" raycaster="objects: .video-plane" grab2="realhand:true"></a-entity>
+        <a-entity oculus-touch-controls="hand: left; model:false"  grab2 ></a-entity>
+        <a-entity oculus-touch-controls="hand: right; model:true" grab2 ></a-entity>
+        <a-entity id=hand_l hand-tracking-controls="hand: left" grab2="realhand:true"></a-entity>
+        <a-entity id=hand_r hand-tracking-controls="hand: right" grab2="realhand:true"></a-entity>
     </a-entity>
 </a-scene>
 
